@@ -32,6 +32,10 @@ public class Servico {
     @Column(nullable = false)
     private Integer duracaoMinutos;
 
+    @Column(columnDefinition = "TEXT")
+    private String descricao;
+
+
 
 }
 

@@ -1,5 +1,6 @@
 package br.com.beauty_salon_api.beauty_salon_api.service;
 
+import br.com.beauty_salon_api.beauty_salon_api.config.GlobalExceptionHandler;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Servico;
 import br.com.beauty_salon_api.beauty_salon_api.repository.ServicoRepository;
 
@@ -23,7 +24,7 @@ public class ServicoService implements ServicoServiceImpl {
 
 
     public Servico atualizar(Long id, Servico servico) {
-        return null;
+        return servicoRepository.save(servico);
     }
 
     public void deletar(Long id) {
@@ -31,10 +32,12 @@ public class ServicoService implements ServicoServiceImpl {
     }
 
     public Servico buscarPorId(Long id) {
-        return null;
+        return servicoRepository.findById(id)
+                .orElseThrow(() -> new GlobalExceptionHandler.ResourceNotFoundException("Serviço não encontrado"));
+
     }
 
     public List<Servico> listarTodos() {
-        return List.of();
+        return servicoRepository.findAll();
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "agendamento")
@@ -15,12 +16,20 @@ public class Agendamento {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_Id", nullable = false)
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @ManyToOne
     @JoinColumn(name = "profissional_id", nullable = false)
     private Profissional profissional;
+
+    @ManyToMany
+    @JoinTable(
+            name = "agendamento_servico",
+            joinColumns = @JoinColumn(name = "agendamento_id"),
+            inverseJoinColumns = @JoinColumn(name = "servico_id"))
+    private List<Servico> servicos;
+
 
     private LocalDateTime dataHora;
 
