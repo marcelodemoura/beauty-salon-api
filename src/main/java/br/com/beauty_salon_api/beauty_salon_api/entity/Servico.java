@@ -29,6 +29,10 @@ public class Servico {
     @Column(nullable = false)
     private String ativo = "S";
 
+    @Column(nullable = false)
+    private Integer duracaoMinutos;
+
+
 }
 
 

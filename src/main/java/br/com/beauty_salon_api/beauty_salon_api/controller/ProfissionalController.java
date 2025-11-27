@@ -2,6 +2,7 @@ package br.com.beauty_salon_api.beauty_salon_api.controller;
 
 import br.com.beauty_salon_api.beauty_salon_api.entity.Profissional;
 import br.com.beauty_salon_api.beauty_salon_api.service.ProfissionalService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,11 +11,15 @@ import java.util.List;
 @RequestMapping("/profissionais")
 public class ProfissionalController {
 
-    private ProfissionalService profissionalService;
+    private final ProfissionalService profissionalService;
+
+    public ProfissionalController(ProfissionalService profissionalService) {
+        this.profissionalService = profissionalService;
+    }
 
     @PostMapping
-    public Profissional salvar(@RequestBody Profissional profissional) {
-        return profissionalService.salvar(profissional);
+    public ResponseEntity<Profissional> salvar(@RequestBody Profissional profissional) {
+        return ResponseEntity.ok(profissionalService.salvar(profissional));
     }
 
     @PutMapping("/{id}")

@@ -1,7 +1,10 @@
 package br.com.beauty_salon_api.beauty_salon_api.controller;
 
+import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoRequestDTO;
+import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoResponseDTO;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Agendamento;
 import br.com.beauty_salon_api.beauty_salon_api.service.AgendamentoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +20,8 @@ public class AgendamentoController {
     }
 
     @PostMapping
-    public Agendamento criar(@RequestBody Agendamento agendamento) {
-        return agendamentoService.criar(agendamento);
+    public ResponseEntity<AgendamentoResponseDTO> criar(@RequestBody AgendamentoRequestDTO dto) {
+        return ResponseEntity.ok(agendamentoService.criar(dto));
     }
 
     @PutMapping("/{id}")

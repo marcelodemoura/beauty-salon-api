@@ -1,5 +1,7 @@
 package br.com.beauty_salon_api.beauty_salon_api.service;
 
+import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoRequestDTO;
+import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoResponseDTO;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Agendamento;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Cliente;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Profissional;
@@ -25,31 +27,46 @@ public class AgendamentoService {
         this.profissionalRepository = profissionalRepository;
     }
 
-    public Agendamento criar(Agendamento agendamento) {
+    public AgendamentoResponseDTO criar(AgendamentoRequestDTO dto) {
 
-        Cliente cliente = clienteRepository.findById(agendamento.getCliente().getId())
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-        Profissional profissional = profissionalRepository.findById(agendamento.getProfissional().getId())
+        Profissional profissional = profissionalRepository.findById(dto.getProfissionalId())
                 .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
 
-        // validação:
-        List<Agendamento> conflitos =
-                agendamentoRepository.verificarConflitos(
-                        profissional.getId(),
-                        agendamento.getDataHora(),
-                        agendamento.getDataFim()
-                );
+        // Verifica conflito de horários
+        boolean existeConflito = !agendamentoRepository.verificarConflitos(
+                profissional.getId(),
+                dto.getDataHora(),
+                dto.getDataFim()
+        ).isEmpty();
 
-        if (!conflitos.isEmpty()) {
-            throw new RuntimeException("Horário já está ocupado para este profissional");
+        if (existeConflito) {
+            throw new RuntimeException("Horário indisponível para este profissional");
         }
 
+        Agendamento agendamento = new Agendamento();
         agendamento.setCliente(cliente);
         agendamento.setProfissional(profissional);
+        agendamento.setDataHora(dto.getDataHora());
+        agendamento.setDataFim(dto.getDataFim());
+        agendamento.setObservacao(dto.getObservacao());
 
-        return agendamentoRepository.save(agendamento);
+        Agendamento salvo = agendamentoRepository.save(agendamento);
 
+        return mapToResponse(salvo);
+    }
+
+    private AgendamentoResponseDTO mapToResponse(Agendamento ag) {
+        AgendamentoResponseDTO dto = new AgendamentoResponseDTO();
+        dto.setId(ag.getId());
+        dto.setCliente(ag.getCliente().getNome());
+        dto.setProfissional(ag.getProfissional().getNome());
+        dto.setDataHora(ag.getDataHora());
+        dto.setDataFim(ag.getDataFim());
+        dto.setObservacao(ag.getObservacao());
+        return dto;
     }
 
     public Agendamento atualizar(Long id, Agendamento agendamento) {

@@ -17,8 +17,8 @@ public class ProfissionalService implements ProfissionalServiceImpl {
     }
 
 
-    public Profissional salvar(Profissional profissional) {
-        return profissionalRepository.save(profissional);
+    public Profissional salvar(Profissional profissionalService) {
+        return profissionalRepository.save(profissionalService);
     }
 
     public Profissional atualizar(Long id, Profissional profissional) {
