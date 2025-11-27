@@ -30,7 +30,6 @@ public class Agendamento {
             inverseJoinColumns = @JoinColumn(name = "servico_id"))
     private List<Servico> servicos;
 
-
     private LocalDateTime dataHora;
 
     private LocalDateTime dataFim;

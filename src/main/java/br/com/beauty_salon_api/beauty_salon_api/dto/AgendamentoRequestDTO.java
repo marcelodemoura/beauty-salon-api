@@ -10,7 +10,7 @@ public class AgendamentoRequestDTO {
 
     private Long clienteId;
     private Long profissionalId;
-    private List<Long> servicosIds; // lista de serviços!
+    private List<Long> servicosIds;
     private LocalDateTime dataHora;
     private String observacao;
 }

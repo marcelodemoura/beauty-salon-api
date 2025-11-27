@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 public class AgendamentoService {
 
@@ -33,9 +34,6 @@ public class AgendamentoService {
         this.servicoRepository = servicoRepository;
     }
 
-    // -----------------------------------------------------------
-    // 📌 CRIAR AGENDAMENTO
-    // -----------------------------------------------------------
     public AgendamentoResponseDTO criar(AgendamentoRequestDTO dto) {
 
         Cliente cliente = clienteRepository.findById(dto.getClienteId())
@@ -76,7 +74,6 @@ public class AgendamentoService {
             throw new RuntimeException("Horário indisponível. Existe outro atendimento muito próximo.");
         }
 
-        // Criar e salvar agendamento
         Agendamento ag = new Agendamento();
         ag.setCliente(cliente);
         ag.setProfissional(profissional);
@@ -89,9 +86,6 @@ public class AgendamentoService {
         return mapToResponse(salvo);
     }
 
-    // -----------------------------------------------------------
-    // 📌 DTO de saída
-    // -----------------------------------------------------------
     private AgendamentoResponseDTO mapToResponse(Agendamento ag) {
         AgendamentoResponseDTO dto = new AgendamentoResponseDTO();
         dto.setId(ag.getId());
@@ -110,9 +104,6 @@ public class AgendamentoService {
         return dto;
     }
 
-    // -----------------------------------------------------------
-    // 📌 ATUALIZAR (versão simples)
-    // -----------------------------------------------------------
     public Agendamento atualizar(Long id, Agendamento agendamento) {
         Agendamento existente = buscarPorId(id);
 
@@ -126,9 +117,6 @@ public class AgendamentoService {
         return agendamentoRepository.save(existente);
     }
 
-    // -----------------------------------------------------------
-    // 📌 CRUD Simples
-    // -----------------------------------------------------------
     public void deletar(Long id) {
         agendamentoRepository.deleteById(id);
     }
@@ -142,9 +130,6 @@ public class AgendamentoService {
         return agendamentoRepository.findAll();
     }
 
-    // -----------------------------------------------------------
-    // 📌 Validação — Apenas o horário de INÍCIO importa
-    // -----------------------------------------------------------
     private void validarDisponibilidade(LocalDateTime inicio) {
 
         DayOfWeek dia = inicio.getDayOfWeek();
