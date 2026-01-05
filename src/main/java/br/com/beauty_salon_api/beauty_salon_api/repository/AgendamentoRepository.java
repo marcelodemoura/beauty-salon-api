@@ -23,6 +23,5 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             LocalDateTime dataHora,
             LocalDateTime dataFim
     );
-
-
 }
+

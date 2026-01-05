@@ -16,9 +16,14 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @PostMapping
-    public Cliente salvar(@RequestBody Cliente cliente) {
-        return clienteService.salvar(cliente);
+    @GetMapping
+    public List<Cliente> listar(@RequestParam(required = false) String nome) {
+
+        if (nome != null && !nome.isBlank()) {
+            return clienteService.buscarPorNome(nome);
+        }
+
+        return clienteService.listarTodos();
     }
 
     @GetMapping("/{id}")
@@ -26,14 +31,16 @@ public class ClienteController {
         return clienteService.buscarPorId(id);
     }
 
-    @GetMapping
-    public List<Cliente> listarTodos() {
-        return clienteService.listarTodos();
+    @PostMapping
+    public Cliente salvar(@RequestBody Cliente cliente) {
+        return clienteService.salvar(cliente);
     }
+
 
     @PutMapping("/{id}")
     public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-        return clienteService.atualizar(id, cliente);
+        cliente.setId(id);
+        return clienteService.salvar(cliente);
     }
 
     @DeleteMapping("/{id}")

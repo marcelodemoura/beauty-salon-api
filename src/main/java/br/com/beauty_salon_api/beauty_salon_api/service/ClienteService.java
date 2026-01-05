@@ -23,6 +23,7 @@ public class ClienteService implements ClienteServiceImpl {
     }
 
 
+
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
@@ -42,6 +43,10 @@ public class ClienteService implements ClienteServiceImpl {
 
     public void deletar(Long id) {
         clienteRepository.deleteById(id);
+    }
+
+    public List<Cliente> buscarPorNome(String nome) {
+        return clienteRepository.findByNomeContainingIgnoreCase(nome);
     }
 
 

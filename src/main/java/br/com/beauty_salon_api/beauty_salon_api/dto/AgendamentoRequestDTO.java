@@ -2,15 +2,11 @@ package br.com.beauty_salon_api.beauty_salon_api.dto;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Data
 public class AgendamentoRequestDTO {
 
-    private Long clienteId;
-    private Long profissionalId;
-    private List<Long> servicosIds;
-    private LocalDateTime dataHora;
-    private String observacao;
-}
+        private String nomeCliente;
+        private Long servicoId;
+        private String data; // yyyy-MM-dd
+        private String hora; // HH:mm
+    }

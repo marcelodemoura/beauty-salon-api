@@ -1,10 +1,8 @@
 package br.com.beauty_salon_api.beauty_salon_api.service;
 
-import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoRequestDTO;
 import br.com.beauty_salon_api.beauty_salon_api.dto.AgendamentoResponseDTO;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Agendamento;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Cliente;
-import br.com.beauty_salon_api.beauty_salon_api.entity.Profissional;
 import br.com.beauty_salon_api.beauty_salon_api.entity.Servico;
 import br.com.beauty_salon_api.beauty_salon_api.repository.AgendamentoRepository;
 import br.com.beauty_salon_api.beauty_salon_api.repository.ClienteRepository;
@@ -34,57 +32,29 @@ public class AgendamentoService {
         this.servicoRepository = servicoRepository;
     }
 
-    public AgendamentoResponseDTO criar(AgendamentoRequestDTO dto) {
+    public Agendamento criarAgendamento(String nomeCliente, Long servicoId, String data, String hora) {
 
-        Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        Cliente cliente = clienteRepository.findByNome(nomeCliente)
+                .orElseGet(() -> {
+                    Cliente novo = new Cliente();
+                    novo.setNome(nomeCliente);
+                    return clienteRepository.save(novo);
+                });
 
-        Profissional profissional = profissionalRepository.findById(dto.getProfissionalId())
-                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+        Servico servico = servicoRepository.findById(servicoId)
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
 
-        // Buscar serviços
-        List<Servico> servicos = servicoRepository.findAllById(dto.getServicosIds());
-        if (servicos.isEmpty()) {
-            throw new RuntimeException("Nenhum serviço selecionado");
-        }
-
-        // Soma total da duração dos serviços
-        int duracaoTotal = servicos.stream()
-                .mapToInt(Servico::getDuracaoMinutos)
-                .sum();
-
-        // Dados de horário
-        LocalDateTime inicio = dto.getDataHora();
-        LocalDateTime fim = inicio.plusMinutes(duracaoTotal);
-
-        // Fim com deslocamento obrigatório
-        LocalDateTime fimComDeslocamento = fim.plusMinutes(30);
-
-        // Validar horário permitido (apenas início)
-        validarDisponibilidade(inicio);
-
-        // Verificar conflito com outros agendamentos
-        boolean existeConflito = !agendamentoRepository.verificarConflitos(
-                profissional.getId(),
-                inicio,
-                fimComDeslocamento
-        ).isEmpty();
-
-        if (existeConflito) {
-            throw new RuntimeException("Horário indisponível. Existe outro atendimento muito próximo.");
-        }
+        LocalDateTime dataHora = LocalDateTime.parse(data + "T" + hora + ":00");
 
         Agendamento ag = new Agendamento();
         ag.setCliente(cliente);
-        ag.setProfissional(profissional);
-        ag.setServicos(servicos);
-        ag.setDataHora(inicio);
-        ag.setDataFim(fim);
-        ag.setObservacao(dto.getObservacao());
+        ag.setServicos(List.of(servico));
+        ag.setDataHora(dataHora);
 
-        Agendamento salvo = agendamentoRepository.save(ag);
-        return mapToResponse(salvo);
+        return agendamentoRepository.save(ag);
     }
+
+
 
     private AgendamentoResponseDTO mapToResponse(Agendamento ag) {
         AgendamentoResponseDTO dto = new AgendamentoResponseDTO();
